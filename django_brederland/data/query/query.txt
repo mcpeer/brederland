@@ -1,0 +1,8 @@
+select ?muni ?muniLabel ?provinceLabel ?flag_image ?CBS_munici_code where {
+  service wikibase:label {bd:serviceParam wikibase:language "nl".}
+  ?muni wdt:P31 wd:Q2039348.
+  ?muni wdt:P131 ?province.
+  OPTIONAL {?muni wdt:P41 ?flag_image. }
+  ?muni wdt:P382 ?CBS_munici_code
+  }
+
