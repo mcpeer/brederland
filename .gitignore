@@ -1,2 +1,5 @@
 *.pyc
 __pycache__/
+django_brederland/core/static/*
+django_brederland/core/templates/*
+django_brederland/db.sqlite3
