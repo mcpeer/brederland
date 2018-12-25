@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 from django.http import HttpResponse
@@ -40,3 +40,11 @@ class ProvinceView(generic.ListView):
                 province_label_fin = province_label_fin + '-' + word.capitalize()
 
         return Municipality.objects.filter(province=province_label_fin).order_by('label')
+
+class MunicipalityView(generic.DetailView):
+    template_name = 'core/gemeente.html'
+
+    def get_object(self):
+        cbs_code_mun = self.kwargs['cbs_code'] 
+        print(cbs_code_mun)
+        return get_object_or_404(Municipality, cbs_code=cbs_code_mun)
