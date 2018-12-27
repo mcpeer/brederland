@@ -29,7 +29,7 @@ if __name__ == '__main__':
     for shape in geo_json['features']:
         code = shape['properties']['code']
         name = shape['properties']['gemeentena']
-
+        print(code, name)
         try:
             str_ = json.dumps(shape)
 

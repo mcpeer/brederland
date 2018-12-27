@@ -2,10 +2,12 @@
 # vianen is in there twice. fix: remove the zuidholland vianen. 
 # sint oedenrode, schijndel and veghel merged into 'Meierijstad'
 # remove these and add Meierijstad. 
-#
-#
-##
+# 
+# # berg en dal is duplicated, good code = 1945, wrong code = 0241
+    # delete duplicate friese meren
 
+    # muiden en naarden moeten weg, zitten in Gooise meren nu! 
+# berg ambacht zit al in Krimpenerwaard, dus delete. 
 
 # load the necessary files to connect to db
 import os
@@ -56,3 +58,16 @@ if __name__ == '__main__':
     #unicipality.objects.get(label='Sint-Oedenrode').delete()
     #Municipality.objects.get(label='Schijndel').delete()
     #Municipality.objects.get(label='Veghel').delete()
+
+    # delete berg en dal
+    #Municipality.objects.get(cbs_code='0241').delete()
+
+    # delete duplicate friese meren
+    #Municipality.objects.get(cbs_code='1921').delete()
+
+    # deze zitten nu in gooise meren
+    #Municipality.objects.get(label='Naarden').delete()
+    #Municipality.objects.get(label='Muiden').delete()
+
+    # deze is al in krimpenerwaard
+    Municipality.objects.get(label='Bergambacht').delete()
