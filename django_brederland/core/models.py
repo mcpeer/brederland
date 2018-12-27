@@ -15,6 +15,7 @@ class Municipality(models.Model):
     province = models.CharField(max_length=255)
     flag_image_url = models.CharField(max_length=255, null=True)
     cbs_code = models.CharField(max_length=4)
+    multi_polygon_str = models.CharField(max_length=400000, null=True)
 
     def __str__(self):
         return self.label
