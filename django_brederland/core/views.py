@@ -4,7 +4,9 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views import generic
 
-from .models import Municipality, VisitedMunicipality
+from .models import Municipality, VisitedMunicipality, Province
+
+import json 
 
 class IndexView(generic.ListView):
     template_name = 'core/index.html'
@@ -39,7 +41,39 @@ class ProvinceView(generic.ListView):
             else: 
                 province_label_fin = province_label_fin + '-' + word.capitalize()
 
-        return Municipality.objects.filter(province=province_label_fin).order_by('label')
+        # load the simplified province JSON
+        province = Province.objects.filter(label=province_label_fin)[0]
+
+        # Here I try to return a list, this works. 
+        return [Municipality.objects.filter(province=province_label_fin).order_by('label'),province]
+
+# class ProvinceView(generic.ListView):
+#     template_name = 'core/provincie.html'
+#     context_object_name = 'province_municipality_list'
+    
+#     def get_queryset(self):
+#         """
+#         Fetches province name 
+#         Parses it in correct format (e.g. noord-brabant --> Noord-Brabant)
+#         Returns the municipalities that belong to the 
+#         province 'province_label'
+#         """
+#         province_label = self.kwargs['province']
+#         split = province_label.split('-')
+#         province_label_fin = None
+
+#         for word in split:
+#             if province_label_fin is None:
+#                 province_label_fin = word.capitalize()
+#             else: 
+#                 province_label_fin = province_label_fin + '-' + word.capitalize()
+
+#         province_municipality_list = Municipality.objects.filter(province=province_label_fin).order_by('label')
+
+#         # parse all shapefiles to one big multipolygon    
+#         total_shapefile = 
+
+#         return {'province_municipality_list': province_municipality_list, 'province_shapes': total_shapefile}
 
 class MunicipalityView(generic.DetailView):
     template_name = 'core/gemeente.html'

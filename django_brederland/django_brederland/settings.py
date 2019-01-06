@@ -31,7 +31,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Core Brederland App
     'core.apps.CoreConfig',
+
+    # Accounts app for signup 
+    'accounts.apps.AccountsConfig',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

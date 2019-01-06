@@ -24,8 +24,6 @@
 
 </head>
 
-<body>
-
 {% comment %} <h2>Login</h2>
                <form method="post" class="login">
                                 {% csrf_token %}
@@ -39,28 +37,27 @@
 			<div id="sign-in-dialog" class="zoom-anim-dialog">
 
 				<div class="small-dialog-header">
-                    <h4><b> Brederland </b> Log In<h4>
+                    <h4><b> Brederland </b> Sign up<h4>
 				</div>
 
-            <p> No <b>Brederland</b> account yet? <a href="{% url 'signup' %}" style="color: #74aea1;">Sign up here.</a> </p>
                 
 
 				<!--Tabs -->
 				<div class="sign-in-form style-1">
-
-                <form method="post" class="login">
-                                {% csrf_token %}
-                                {{ form.as_p }}
-                                <button type="submit" class="button border margin-top-5">Login</button>
-                            </form>
+        <p> Already a <b>Brederland</b> user? <a href="{% url 'login' %}" style="color: #74aea1;">Log in here.</a> </p>
+                      <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="button border margin-top-5">Sign up</button>
+              </form>
 				</div>
-                <br>
+                        <br>
                 <p><i>Back to <a href="{% url 'core:index' %}" style="color: #74aea1;">home </a></i></p>
 
 			</div>
 			<!-- Sign In Popup / End -->
 
-</body>
+
 <!-- Scripts
 ================================================== -->
 <script type="text/javascript" src="{% static 'core/scripts/jquery-2.2.0.min.js' %}"></script>

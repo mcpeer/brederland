@@ -20,7 +20,6 @@ class Municipality(models.Model):
     def __str__(self):
         return self.label
 
-
 class VisitedMunicipality(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     municipality = models.ForeignKey(
@@ -35,3 +34,14 @@ class VisitedMunicipality(models.Model):
 
     def __str__(self):
         return "{0} visited by {1}".format(str(self.municipality), str(self.user))
+
+"""
+Province class. Actually, Municipality should be linked to this.
+"""
+class Province(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    label = models.CharField(max_length=255)
+    multi_polygon = models.CharField(max_length=150000000, null=True)
+
+    def __str__(self):
+        return self.label
