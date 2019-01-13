@@ -82,3 +82,20 @@ class MunicipalityView(generic.DetailView):
         cbs_code_mun = self.kwargs['cbs_code'] 
         print(cbs_code_mun)
         return get_object_or_404(Municipality, cbs_code=cbs_code_mun)
+
+class DashboardView(generic.ListView):
+    template_name = 'core/dashboard.html'
+    context_object_name = 'user_information'
+
+    def get_queryset(self):
+        """
+        Return the number of municipalities that 
+        this user has visited.
+        """
+
+        list_of_visited_municipalities = VisitedMunicipality.objects.filter(
+            user_id=self.request.user.id)
+
+        nr_visits = len(list_of_visited_municipalities)
+
+        return [list_of_visited_municipalities, nr_visits]
