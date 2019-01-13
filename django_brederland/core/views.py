@@ -3,8 +3,10 @@ from django.shortcuts import render, get_object_or_404
 # Create your views here.
 from django.http import HttpResponse
 from django.views import generic
+from django.urls import reverse_lazy
 
 from .models import Municipality, VisitedMunicipality, Province
+from django.contrib.auth.models import User
 
 import json 
 
@@ -99,3 +101,14 @@ class DashboardView(generic.ListView):
         nr_visits = len(list_of_visited_municipalities)
 
         return [list_of_visited_municipalities, nr_visits]
+
+class DashboardProfileView(generic.UpdateView):
+    template_name = 'core/dashboard-my-profile.html'
+    model = User
+    fields = ['first_name', 'last_name', 'email']
+
+    success_url = reverse_lazy('core:dashboard-profile')
+
+
+    def get_object(self, queryset=None):
+        return self.request.user
