@@ -25,7 +25,7 @@ SECRET_KEY = 'v4r944kd@exr4fy)bmtyf7899%06++1jt3zr(6*kg&h#-a50yj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['evertjanpeer.localhost.run', 'localhost', '127.0.0.1']
 
 
 # Application definition
