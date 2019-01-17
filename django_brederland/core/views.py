@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.views import generic
 from django.urls import reverse_lazy
 
-from .models import Municipality, VisitedMunicipality, Province
+from .models import Municipality, VisitedMunicipality, Province, MunicipalityListMembership
 from django.contrib.auth.models import User
 
 import json 
@@ -96,7 +96,7 @@ class DashboardView(generic.ListView):
         """
 
         list_of_visited_municipalities = VisitedMunicipality.objects.filter(
-            user_id=self.request.user.id)
+            user_id=self.request.user.id).order_by('-issued_date')[:10]
 
         nr_visits = len(list_of_visited_municipalities)
 
@@ -109,6 +109,36 @@ class DashboardProfileView(generic.UpdateView):
 
     success_url = reverse_lazy('core:dashboard-profile')
 
-
     def get_object(self, queryset=None):
         return self.request.user
+
+
+class DashboardNLListView(generic.ListView):
+    model = VisitedMunicipality
+    fields = ['municipality']
+    context_object_name = 'list_information'
+
+    success_url=reverse_lazy('core:dashboard-nl-list')
+
+    def get_queryset(self):
+        list_label = 'Nederland'
+
+        list_of_visited_municipalities = VisitedMunicipality.objects.filter(
+            user_id=self.request.user.id).values_list('municipality__label', flat=True)
+        print(list_of_visited_municipalities)
+
+        all_municipalities = MunicipalityListMembership.objects.filter(
+            list_membership__label = list_label).order_by('municipality__label')
+        #all_municipalities = Municipality.objects.all().order_by('label')
+
+        complete = round(len(list_of_visited_municipalities)/len(all_municipalities)*100)
+        
+        print(all_municipalities)
+        return [list_of_visited_municipalities, all_municipalities, complete, list_label]
+
+    def form_valid(self, form):
+        form.instance.user_id = self.request.user.ids
+        return super(DashboardNLListView, self).form_valid(form)
+
+    template_name = 'core/dashboard-nl-list.html'
+

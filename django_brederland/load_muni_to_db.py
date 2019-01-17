@@ -1,5 +1,7 @@
 # load the necessary files to connect to db
 import os
+import datetime
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_brederland.settings")
 import django
 django.setup()
