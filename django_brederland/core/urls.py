@@ -11,5 +11,7 @@ urlpatterns = [
     path('dashboard', views.DashboardView.as_view(), name='dashboard'),
     path('dashboard-profile', views.DashboardProfileView.as_view(), name='dashboard-profile'),
     path('dashboard-nl-list', views.DashboardNLListView.as_view(), name='dashboard-nl-list'),
+    path('dashboard-lists', views.DashboardListsView.as_view(), name='dashboard-lists'),
+    #path('dashboard-list/<slug:slug>,<int:id>/', views.DashboardListView.as_view(), name='dashboard-single-list'),
     # path('account/', include('django.contrib.auth.urls')), # new
 ]

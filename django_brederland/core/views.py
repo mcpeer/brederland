@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.views import generic
 from django.urls import reverse_lazy
 
-from .models import Municipality, VisitedMunicipality, Province, MunicipalityListMembership
+from .models import Municipality, VisitedMunicipality, Province, MunicipalityListMembership, MunicipalityList, MunicipalityListType
 from django.contrib.auth.models import User
 
 import json 
@@ -141,4 +141,22 @@ class DashboardNLListView(generic.ListView):
         return super(DashboardNLListView, self).form_valid(form)
 
     template_name = 'core/dashboard-nl-list.html'
+
+class DashboardListsView(generic.ListView):
+    template_name = 'core/dashboard-lists.html'
+    model = MunicipalityList
+    context_object_name = 'lists_information'
+
+    def get_queryset(self):
+        """
+        Return the lists available on the website.
+        """
+        list_types = MunicipalityListType.objects.all().order_by('label')
+        
+        result = []
+        for i in list_types:
+            result.append(MunicipalityList.objects.filter(category = i).order_by('label'))
+
+        return result
+
 
