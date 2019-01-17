@@ -1,12 +1,14 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 
 # Create your views here.
 from django.http import HttpResponse
 from django.views import generic
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 
 from .models import Municipality, VisitedMunicipality, Province, MunicipalityListMembership, MunicipalityList, MunicipalityListType
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 import json 
 
@@ -98,7 +100,9 @@ class DashboardView(generic.ListView):
         list_of_visited_municipalities = VisitedMunicipality.objects.filter(
             user_id=self.request.user.id).order_by('-issued_date')[:10]
 
-        nr_visits = len(list_of_visited_municipalities)
+        nr_visits = VisitedMunicipality.objects.filter(
+            user_id=self.request.user.id).count()
+
 
         return [list_of_visited_municipalities, nr_visits]
 
@@ -112,35 +116,54 @@ class DashboardProfileView(generic.UpdateView):
     def get_object(self, queryset=None):
         return self.request.user
 
-
-class DashboardNLListView(generic.ListView):
+class DashboardListView(generic.ListView):
     model = VisitedMunicipality
-    fields = ['municipality']
     context_object_name = 'list_information'
-
-    success_url=reverse_lazy('core:dashboard-nl-list')
+    template_name = 'core/dashboard-list.html'
 
     def get_queryset(self):
-        list_label = 'Nederland'
+        """
+        Retrieve visited municipalities for user
+        Retrieve all municipalities that are in this list 
+        Calculate completion metric
+        return both to the page. 
+        """
+        pk = self.kwargs.get('pk')
+
+        list_label = get_object_or_404(MunicipalityList, id=pk)
+
+        all_municipalities_from_list = MunicipalityListMembership.objects.filter(
+            list_membership__id = pk).order_by('municipality__label')
 
         list_of_visited_municipalities = VisitedMunicipality.objects.filter(
-            user_id=self.request.user.id).values_list('municipality__label', flat=True)
-        print(list_of_visited_municipalities)
+            user_id=self.request.user.id, municipality__label__in=all_municipalities_from_list.values_list('municipality__label')).values_list('municipality__label', flat=True)
 
-        all_municipalities = MunicipalityListMembership.objects.filter(
-            list_membership__label = list_label).order_by('municipality__label')
-        #all_municipalities = Municipality.objects.all().order_by('label')
-
-        complete = round(len(list_of_visited_municipalities)/len(all_municipalities)*100)
+        complete = round(len(list_of_visited_municipalities)/len(all_municipalities_from_list)*100)
         
-        print(all_municipalities)
-        return [list_of_visited_municipalities, all_municipalities, complete, list_label]
+        return [list_of_visited_municipalities, all_municipalities_from_list, complete, list_label]
 
-    def form_valid(self, form):
-        form.instance.user_id = self.request.user.ids
-        return super(DashboardNLListView, self).form_valid(form)
+def update_visited(request, pk):
+    # pk is the list that we will alter
+    municipalities_in_list = MunicipalityListMembership.objects.filter(list_membership__id=pk)
 
-    template_name = 'core/dashboard-nl-list.html'
+    # delete all checked by user 
+    VisitedMunicipality.objects.filter(
+        user_id = request.user.id, municipality__label__in=municipalities_in_list.values_list('municipality__label')).delete()
+    
+    checked = request.POST.getlist('check')
+    print(checked)
+
+    # create newly checked by user
+    if len(checked) > 0:
+        for municipality_id in checked:
+            m = VisitedMunicipality()
+            m.municipality = get_object_or_404(Municipality, id=municipality_id)
+            m.user = request.user
+            m.issued_date = timezone.now()
+            m.save()
+
+    return HttpResponseRedirect(reverse('core:dashboard-single-list', args=(pk,)))
+   
 
 class DashboardListsView(generic.ListView):
     template_name = 'core/dashboard-lists.html'
