@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import url
 
 from . import views
 
@@ -15,6 +16,9 @@ urlpatterns = [
     
     # path to update the visited municipalities
     path('update-municipalities/<uuid:pk>', views.update_visited, name='update-visited'),  
+
+    # path for search test
+    url(r'^ajax/autocomplete/$', views.autocomplete, name='ajax_autocomplete')
 
     # path('account/', include('django.contrib.auth.urls')), # new
 ]

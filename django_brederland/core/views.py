@@ -6,11 +6,13 @@ from django.http import HttpResponse
 from django.views import generic
 from django.urls import reverse_lazy,reverse
 
-from .models import Municipality, VisitedMunicipality, Province, MunicipalityListMembership, MunicipalityList, MunicipalityListType
+from .models import Municipality, VisitedMunicipality, Province, MunicipalityListMembership, MunicipalityList, MunicipalityListType, ResidenceMap
 from django.contrib.auth.models import User
 from django.utils import timezone
 
 import json 
+from django.http import JsonResponse
+
 
 class IndexView(generic.ListView):
     template_name = 'core/index.html'
@@ -182,4 +184,15 @@ class DashboardListsView(generic.ListView):
 
         return result
 
+def autocomplete(request):
+    if request.is_ajax():
+        queryset = ResidenceMap.objects.filter(city_name__contains=request.GET.get('search', None))
+        print(queryset)
 
+        list = []        
+        for i in queryset:
+            list.append(str(i.city_name)+' ('+str(i.municipality)+')')
+        data = {
+            'list': list,
+        }
+        return JsonResponse(data)
